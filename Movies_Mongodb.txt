@@ -1,0 +1,63 @@
+# Andrew and Michael Turnbach
+
+#A.) number of movies in Collection -works
+db.movies.aggregate({
+		$group:
+		{
+			_id: null,
+			total: { $sum: 1}
+		}
+	}
+)
+
+#B.) number of movies in collection that had votes -works
+db.movies.count(
+	{
+		votes: {
+		$exists: true
+		}
+	}
+)
+
+#C) number of movies in the collection that were rated -works
+db.movies.count({rating:{$exists: true}})
+
+#D.)number of movies in 1972 -works
+db.movies.aggregate([
+                     { $match: { year: {$in: [1972]} } },
+                     { $group: { _id: null, total: { $sum: 1 } } },
+                   ])
+
+
+#number of movies per year(in ascending order)
+
+db.movies.aggregate([
+                     { $group: { _id:"$year", total: { $sum: 1 } } },
+                     { $sort: {_id:1 } }
+                   ])
+                   
+#the year that had the largest number of films
+db.movies.aggregate([
+                       { $group: { _id: "$year", total: { $sum: 1 } } },
+                       { $sort: { total: -1 } },
+                       { $limit:1}
+                     ])
+                     
+#all genres in alphabetical order
+
+
+
+
+
+#number of sci-fi movies
+db.movies.count(
+		{genres: {$in: ["Sci-Fi"]}
+	}
+)
+
+
+#number of films by genres -works
+db.movies.aggregate([
+                     { $group: { _id:"$genres", total: { $sum: 1 } } },
+                     { $sort: { total: -1 } }
+                   ])
